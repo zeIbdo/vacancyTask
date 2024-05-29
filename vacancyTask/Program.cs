@@ -14,7 +14,9 @@
             string fatherName = Console.ReadLine();
             nameValidation(fatherName, 2, 20);
             Console.WriteLine("Enter the age(18-65):");
-            int age = Convert.ToInt32(Console.ReadLine());
+            int age;
+            if (!(int.TryParse(Console.ReadLine(), out age)))
+                Console.WriteLine("information must be digit");
             ageValidation(age);
             Console.WriteLine("Enter the FIN(FIN must be consist of uppercase letters and numbers):");
             string FIN = Console.ReadLine();
@@ -26,45 +28,17 @@
             string phoneNumber = Console.ReadLine();
             phoneNumberValidation(phoneNumber);
             Console.WriteLine("Enter the salary:");
-            int salary = Convert.ToInt32(Console.ReadLine());
+            int salary;
+            if (!(int.TryParse(Console.ReadLine(), out salary)))
+                Console.WriteLine("information must be digit");
             salaryValidation(salary);
-            Console.WriteLine($"{firstName} {lastName} {fatherName} sisteme elave olundu");
+            Console.WriteLine($"{firstName} {lastName} {fatherName} has been added to the system");
         }
-        #region comment
-        //static void nameLength(string name,int minCharacter, int maxCharacter)
-        //{
-        //    if (name.Length<minCharacter || name.Length>maxCharacter)
-        //        Console.WriteLine($"melumatin uzunlugu {minCharacter} ve {maxCharacter} arasinda olmalidir");
-        //}
-        //private static void OnlyLetters(string name)
-        //{
-        //    bool isLetter = false;
-        //    foreach(char letter in name)
-        //    {
-        //        int asciiCode = (int)letter;
-        //        if ((asciiCode >= 65 & asciiCode <= 90) || (asciiCode >= 97 & asciiCode <= 122))
-        //            isLetter = true;
-
-        //    }
-        //        if(isLetter==false)
-        //            Console.WriteLine("daxil etdiyiniz melumal atcaq herflerden ibaret olmalidir");
-        //}
-        //static void firstLetterUpper(string name)
-        //{
-        //    bool firstLetterisUpper = false;
-        //    char firstLetter = name[0];
-        //    if (firstLetter >= 65 & firstLetter <= 90)
-        //        firstLetterisUpper = true;
-
-        //    if(firstLetterisUpper==false)
-        //        Console.WriteLine("ilk herf boyuk olmalidir");
-        //} 
-        #endregion
         static bool nameLength(string name, int minCharacter, int maxCharacter)
         {
             if (name.Length < minCharacter || name.Length > maxCharacter)
             {
-                Console.WriteLine($"melumatin uzunlugu {minCharacter} ve {maxCharacter} arasinda olmalidir");
+                Console.WriteLine($"length of the information must be between {minCharacter} and {maxCharacter}");
                 return false;
             }
             return true;
@@ -73,10 +47,10 @@
         {
             foreach (char letter in name)
             {
-                int asciiCode = (int)letter;
-                if (!((asciiCode >= 65 && asciiCode <= 90) || (asciiCode >= 97 && asciiCode <= 122)))
+                
+                if (!char.IsLetter(letter))
                 {
-                    Console.WriteLine("daxil etdiyiniz melumat ancaq herflerden ibaret olmalidir");
+                    Console.WriteLine("this information must be consist of only letters");
                     return false;
                 }
             }
@@ -84,15 +58,19 @@
         }
         static bool firstLetterUpper(string name)
         {
-            char firstLetter = name[0];
-            if (!(firstLetter >= 65 && firstLetter <= 90))
+            while (name.Length > 0)
             {
-                Console.WriteLine("ilk herf boyuk olmalidir");
-                return false;
+                char firstLetter = name[0];
+                if (!char.IsUpper(firstLetter))
+                {
+                    Console.WriteLine("first letter must be uppercase");
+                    return false;
+                }
+                return true;
             }
-            return true;
+            return false;
         }
-        static void nameValidation(string name, int minCharacter, int maxCharacter)
+        static string nameValidation(string name, int minCharacter, int maxCharacter)
         {
             bool validLength = nameLength(name, minCharacter, maxCharacter);
             bool allElementsLetter = OnlyLetters(name);
@@ -105,6 +83,7 @@
                 firstLetterIsUpper = firstLetterUpper(name);
                 
             }
+            return name;
             
         }
         static bool ageGap(int age)
@@ -113,7 +92,7 @@
                 return true;
             else
             {
-                Console.WriteLine("yas araligi 18 ve 65 arasinda olmalidir");
+                Console.WriteLine("Age must be between 18 and 65");
                 return false;
             }
         }
@@ -122,7 +101,8 @@
             bool ageIsValid = ageGap(age);
             while (ageIsValid == false)
             {
-                age = Convert.ToInt32(Console.ReadLine());
+                if(!(int.TryParse(Console.ReadLine(),out age)))
+                    Console.WriteLine("information must be digit");
                 ageIsValid = ageGap(age);
             }
         }
@@ -131,7 +111,11 @@
             foreach(char chr in FIN)
             {
                 int asciiCode = (int)chr;
-                if (!(asciiCode >= 65 & asciiCode <= 90) || !(asciiCode >= 48 && asciiCode <= 57))
+                if ((asciiCode >= 65 & asciiCode <= 90) || (asciiCode >= 48 && asciiCode <= 57))
+                {
+                    return true;
+                }
+                else
                 {
                     Console.WriteLine("FIN code must be consist of only upper letters and digits");
                     return false;
@@ -147,7 +131,7 @@
             }
             else
             {
-                Console.WriteLine("FIN uzunlugu 7 olamalidir");
+                Console.WriteLine("length of FIN must be 7");
                 return false;
             }
         }
@@ -169,7 +153,7 @@
                 return true;
             else
             {
-                Console.WriteLine("Aviable positions are *\"HR*\" , *\"Audit*\" , *\"Engineer*\"");
+                Console.WriteLine("only aviable positions are \"HR\" , \"Audit\" , \"Engineer\"");
                 return false;
             }
         }
@@ -184,21 +168,22 @@
         }
         static bool OnlyNumber(string number)
         {
-            bool numberIsValid = false;
-            for (int i = 0; i < number.Length; i++)
+            while (number.Length > 0)
             {
-                int digit = (int)number[i];
-                if ((digit >= 48 && digit <= 57))
-                    numberIsValid = true;
-                else if ((int)number[0] == 43)
-                    numberIsValid = true;
-                else
+
+                for (int i = 1; i < number.Length; i++)
                 {
-                    Console.WriteLine("number should be consist of digits and country code");
-                    numberIsValid=false;
+                    int digit = (int)number[i];
+                    if ((digit >= 48 && digit <= 57) && number[0] == '+')
+                        return true;
+                    else
+                    {
+                        Console.WriteLine("number should be consist of digits and country code");
+                        return false;
+                    }
                 }
             }
-            return numberIsValid;
+            return false;
         }
         static bool numberLength(string number)
         {
@@ -243,7 +228,7 @@
                 return true;
             else
             {
-                Console.WriteLine("Maas 1500 ve 5000 azn arasinda ola biler");
+                Console.WriteLine("salary must be between 1500 and 5000 azn");
                 return false;
             }
         }
@@ -252,7 +237,8 @@
             bool salaryIsValid = salaryGap(salary);
             while (salaryIsValid == false)
             {
-                salary = Convert.ToInt32(Console.ReadLine());
+                if (!(int.TryParse(Console.ReadLine(), out salary)))
+                    Console.WriteLine("information must be digit");
                 salaryIsValid = salaryGap(salary);
             }
         }
