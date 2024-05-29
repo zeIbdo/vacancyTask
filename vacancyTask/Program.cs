@@ -30,7 +30,7 @@ namespace vacancyTask
             Console.WriteLine("Enter the salary:");
             int salary = salaryValidation(Convert.ToInt32(Console.ReadLine()));
             
-            Console.WriteLine($"{salary}  has been added to the system");
+            Console.WriteLine($"{firstName} {lastName} has been added to the system");
         }
         static bool nameLength(string name, int minCharacter, int maxCharacter)
         {
