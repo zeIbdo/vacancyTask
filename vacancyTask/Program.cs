@@ -16,10 +16,8 @@ namespace vacancyTask
             string fatherName = nameValidation(Console.ReadLine(), 2, 20);
 
             Console.WriteLine("Enter the age(18-65):");
-            int age;
-            if (!(int.TryParse(Console.ReadLine(), out age)))
-                Console.WriteLine("information must be digit");
-            ageValidation(age);
+            int age = ageValidation(Convert.ToInt32(Console.ReadLine()));
+
             Console.WriteLine("Enter the FIN(FIN must be consist of uppercase letters and numbers):");
             string FIN = FINvalidation(Console.ReadLine());
 
@@ -28,12 +26,11 @@ namespace vacancyTask
 
             Console.WriteLine("Enter the phone number:");
             string phoneNumber = phoneNumberValidation(Console.ReadLine());
-            
+
             Console.WriteLine("Enter the salary:");
-            if (!(int.TryParse(Console.ReadLine(), out int salary)))
-                Console.WriteLine("information must be digit");
-            salaryValidation(salary);
-            Console.WriteLine($"{salary} {phoneNumber} has been added to the system");
+            int salary = salaryValidation(Convert.ToInt32(Console.ReadLine()));
+            
+            Console.WriteLine($"{salary}  has been added to the system");
         }
         static bool nameLength(string name, int minCharacter, int maxCharacter)
         {
@@ -96,7 +93,7 @@ namespace vacancyTask
                 return false;
             }
         }
-        static void ageValidation(int age)
+        static int ageValidation(int age)
         {
             bool ageIsValid = ageGap(age);
             while (ageIsValid == false)
@@ -105,6 +102,7 @@ namespace vacancyTask
                     Console.WriteLine("information must be digit");
                 ageIsValid = ageGap(age);
             }
+            return age;
         }
         static bool onlyUpperLettersAndNumbers(string FIN)
         {
@@ -236,7 +234,7 @@ namespace vacancyTask
                 return false;
             }
         }
-        static void salaryValidation(int salary)
+        static int salaryValidation(int salary)
         {
             bool salaryIsValid = salaryGap(salary);
             while (salaryIsValid == false)
@@ -245,6 +243,7 @@ namespace vacancyTask
                     Console.WriteLine("information must be digit");
                 salaryIsValid = salaryGap(salary);
             }
+            return salary;
         }
     }
 }
