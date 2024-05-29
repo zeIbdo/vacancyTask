@@ -1,38 +1,39 @@
-﻿namespace vacancyTask
+﻿using System.Xml.Linq;
+
+namespace vacancyTask
 {
     internal class Program
     {
         static void Main(string[] args)
         {
             Console.WriteLine("Enter first name:");
-            string firstName = Console.ReadLine();
-            nameValidation(firstName, 2, 20);
+            string firstName = nameValidation(Console.ReadLine(), 2, 20);
+
             Console.WriteLine("Enter last name: ");
-            string lastName = Console.ReadLine();
-            nameValidation(lastName, 2, 35);
+            string lastName = nameValidation(Console.ReadLine(), 2, 35);
+
             Console.WriteLine("Enter father name:");
-            string fatherName = Console.ReadLine();
-            nameValidation(fatherName, 2, 20);
+            string fatherName = nameValidation(Console.ReadLine(), 2, 20);
+
             Console.WriteLine("Enter the age(18-65):");
             int age;
             if (!(int.TryParse(Console.ReadLine(), out age)))
                 Console.WriteLine("information must be digit");
             ageValidation(age);
             Console.WriteLine("Enter the FIN(FIN must be consist of uppercase letters and numbers):");
-            string FIN = Console.ReadLine();
-            FINvalidation(FIN);
+            string FIN = FINvalidation(Console.ReadLine());
+
             Console.WriteLine("Enter the position(Aviable positions are \"HR\" , \"Audit\" , \"Engineer\"): ");
-            string position = Console.ReadLine().ToLower();
-            positionValidation(position);
+            string position = positionValidation(Console.ReadLine().ToLower());
+
             Console.WriteLine("Enter the phone number:");
-            string phoneNumber = Console.ReadLine();
-            phoneNumberValidation(phoneNumber);
+            string phoneNumber = phoneNumberValidation(Console.ReadLine());
+            
             Console.WriteLine("Enter the salary:");
-            int salary;
-            if (!(int.TryParse(Console.ReadLine(), out salary)))
+            if (!(int.TryParse(Console.ReadLine(), out int salary)))
                 Console.WriteLine("information must be digit");
             salaryValidation(salary);
-            Console.WriteLine($"{firstName} {lastName} {fatherName} has been added to the system");
+            Console.WriteLine($"{salary} {phoneNumber} has been added to the system");
         }
         static bool nameLength(string name, int minCharacter, int maxCharacter)
         {
@@ -48,7 +49,7 @@
             foreach (char letter in name)
             {
                 
-                if (!char.IsLetter(letter))
+                if (char.IsLetter(letter)==false)
                 {
                     Console.WriteLine("this information must be consist of only letters");
                     return false;
@@ -75,16 +76,15 @@
             bool validLength = nameLength(name, minCharacter, maxCharacter);
             bool allElementsLetter = OnlyLetters(name);
             bool firstLetterIsUpper = firstLetterUpper(name);
-            while (validLength == false || allElementsLetter==false || firstLetterIsUpper==false)
+            while (validLength == false || allElementsLetter == false || firstLetterIsUpper == false)
             {
                 name = Console.ReadLine();
-                validLength= nameLength(name,  minCharacter,  maxCharacter);
-                allElementsLetter= OnlyLetters(name);
+                validLength = nameLength(name, minCharacter, maxCharacter);
+                allElementsLetter = OnlyLetters(name);
                 firstLetterIsUpper = firstLetterUpper(name);
-                
+
             }
             return name;
-            
         }
         static bool ageGap(int age)
         {
@@ -108,12 +108,13 @@
         }
         static bool onlyUpperLettersAndNumbers(string FIN)
         {
+                bool finIsValid = false;
             foreach(char chr in FIN)
             {
                 int asciiCode = (int)chr;
                 if ((asciiCode >= 65 & asciiCode <= 90) || (asciiCode >= 48 && asciiCode <= 57))
                 {
-                    return true;
+                    finIsValid= true;
                 }
                 else
                 {
@@ -121,7 +122,7 @@
                     return false;
                 }
             }
-            return true;
+            return finIsValid ;
         }
         static bool FIN_length(string FIN) 
         {
@@ -135,7 +136,7 @@
                 return false;
             }
         }
-        static void FINvalidation(string FIN)
+        static string FINvalidation(string FIN)
         {
             
             bool charactersIsValid = onlyUpperLettersAndNumbers(FIN);
@@ -145,7 +146,8 @@
                 FIN = Console.ReadLine();
                 charactersIsValid = onlyUpperLettersAndNumbers(FIN);
                 lengthIsValid = FIN_length(FIN);
-            }           
+            }
+            return FIN;
         }
         static bool validPosition(string position)
         {
@@ -157,7 +159,7 @@
                 return false;
             }
         }
-        static void positionValidation(string position)
+        static string positionValidation(string position)
         {
             bool positionIsValid = validPosition(position);
             while (positionIsValid == false)
@@ -165,25 +167,23 @@
                 position = Console.ReadLine().ToLower();
                 positionIsValid = validPosition(position);
             }
+            return position;
         }
         static bool OnlyNumber(string number)
         {
             while (number.Length > 0)
             {
-
                 for (int i = 1; i < number.Length; i++)
                 {
-                    int digit = (int)number[i];
-                    if ((digit >= 48 && digit <= 57) && number[0] == '+')
-                        return true;
-                    else
+                    if (!char.IsDigit(number[i]))
                     {
                         Console.WriteLine("number should be consist of digits and country code");
                         return false;
                     }
                 }
+                break;
             }
-            return false;
+            return true;
         }
         static bool numberLength(string number)
         {
@@ -192,14 +192,14 @@
                 Console.WriteLine("your number length is not correct");
                 return false;
             }
-            else
                 return true;
         }
+
         static bool countryCode(string number)
         {
-            while (number.Length > 3)
+            if (number.Length > 3)
             {
-                if (number[0] == '+' & number[1] == '9' & number[2] == '9' & number[3] == '4')
+                if (number[0] == '+' && number[1] == '9' && number[2] == '9' && number[3] == '4')
                     return true;
                 else
                 {
@@ -207,21 +207,25 @@
                     return false;
                 }
             }
+            Console.WriteLine("country code is not right");
             return false;
         }
-        static void phoneNumberValidation(string number)
+
+        static string phoneNumberValidation(string number)
         {
             bool consistsOfNumbers = OnlyNumber(number);
             bool lengthIsValid = numberLength(number);
             bool countryCodeIsRight = countryCode(number);
-            while (consistsOfNumbers == false || lengthIsValid == false || countryCodeIsRight == false)
+            while (!consistsOfNumbers || !lengthIsValid || !countryCodeIsRight)
             {
                 number = Console.ReadLine();
                 consistsOfNumbers = OnlyNumber(number);
                 lengthIsValid = numberLength(number);
                 countryCodeIsRight = countryCode(number);
             }
+            return number;
         }
+
         static bool salaryGap(int salary)
         {
             if (salary >= 1500 && salary <= 5000)
